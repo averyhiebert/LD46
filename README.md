@@ -11,6 +11,11 @@ A game for Ludum Dare 46.
 - Throw it in order to go through narrow tunnels etc.
 - There is a twist at the end.
 
-## Enemy ideas:
+## Obstacle ideas:
 - Ground enemy you must stab
 - Diving bird - throw the animal over it as it dives.
+- Spiky obstacle only you can fit under - need to throw puffball over
+- Tunnel only you can fit in to push button - must throw puffball, go in and
+    hit button, and come back out to catch puffball.
+- Throw animal to hit a button?
+- Maybe also a basketball hoop somewhere?

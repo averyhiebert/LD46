@@ -6,7 +6,7 @@ export default class Player extends Phaser.GameObjects.Sprite{
         this.body.setBounce(0.2);
         this.body.setCollideWorldBounds(true);
 
-        this.playerSpeed = 250;
+        this.playerSpeed = 280;
         this.holding = null;
     }
 
@@ -27,7 +27,7 @@ export default class Player extends Phaser.GameObjects.Sprite{
         }
 
         // Jump
-        if (cursors.space.isDown && this.body.touching.down){
+        if (cursors.space.isDown && this.body.blocked.down){
             this.body.setVelocityY(-500);
         }
 

@@ -15,26 +15,37 @@ export default class L1Scene extends Phaser.Scene{
         this.load.image('notcarrying','src/assets/notcarrying.png');
         this.load.image('puffball','src/assets/puffball.png');
         this.load.image('puffball-dead','src/assets/puffball_dead.png');
+
+        this.load.image('tileset','src/assets/tiles/tileset.png');
+        this.load.json('test-level','src/assets/tiles/test_level.json');
     }
 
     create(){
         let { width, height } = this.sys.game.canvas;
         this.add.tileSprite(0,0,width,height,'sky').setOrigin(0,0);
 
+        // Draw the tilemap
+        let level_data = this.cache.json.get('test-level');
+        const map = this.make.tilemap({data:level_data,tileWidth:50,
+            tileHeight:50});
+        const tiles = map.addTilesetImage('tileset');
+        const layer = map.createStaticLayer(0, tiles, 0, 0);
+        layer.setCollisionBetween(1,3);
+        this.layer = layer;
+
         // Add objects to the scene
-        const platforms = this.createPlatforms();
         this.player = new Player(this,100,300);
         this.puffball = new Puffball(this,200,200);
         this.player.caught(this.puffball)
 
         // Set up interactions etc.
-        this.physics.add.collider(this.player,platforms);
+        this.physics.add.collider(this.player,layer);
         this.physics.add.overlap(this.player,this.puffball,
             () => this.player.caught(this.puffball));
-        this.physics.add.overlap(this.puffball,platforms,
+        this.physics.add.collider(this.puffball,layer,
             () => this.puffball.die());
-        this.physics.add.collider(this.puffball,platforms);
-
+        //this.physics.add.overlap(this.puffball,layer,
+        //    () => this.puffball.die());
 
         this.cursors = this.input.keyboard.createCursorKeys()
     }
@@ -42,13 +53,12 @@ export default class L1Scene extends Phaser.Scene{
     update(){
         this.player.doControls(this.cursors);
         this.puffball.update();
-    }
-
-    createPlatforms(){
-        let { width, height } = this.sys.game.canvas;
-        const platforms = this.physics.add.staticGroup();
-        let ground = platforms.create(width/2,height-50,'platform');
-        return platforms
+        // Hack to handle overlap on puffball when carried:
+        //  (This is still not ideal and I need to find a better fix.)
+        var tile = this.layer.getTileAtWorldXY(this.puffball.x,this.puffball.y);
+        if (tile && tile.index >= 1){
+            this.puffball.die();
+        }
     }
 }
 

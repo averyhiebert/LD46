@@ -12,7 +12,6 @@ export default class Puffball extends Phaser.GameObjects.Sprite{
 
     tossed(){
         this.body.enable=true; // Turn physics back on
-        //this.body.setVelocityY(-500 + 0.5*this.heldBy.body.velocity.y)
         this.body.setVelocityY(-500)
         this.body.setVelocityX(0.9*this.heldBy.body.velocity.x)
         this.isCaught = false;

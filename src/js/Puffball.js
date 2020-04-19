@@ -4,7 +4,6 @@ export default class Puffball extends Phaser.GameObjects.Sprite{
         scene.physics.world.enable(this)
         scene.add.existing(this);
         this.body.setBounce(0.5);
-        this.body.setCollideWorldBounds(true);
 
         this.isCaught = false;
         this.heldBy = null;

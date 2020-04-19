@@ -17,16 +17,18 @@ export default class L1Scene extends Phaser.Scene{
         this.load.image('puffball-dead','src/assets/puffball_dead.png');
 
         this.load.image('tileset','src/assets/tiles/tileset.png');
-        this.load.json('test-level','src/assets/tiles/test_level.json');
+        this.load.tilemapCSV('test-level','src/assets/tiles/test_level.csv');
     }
 
     create(){
         let { width, height } = this.sys.game.canvas;
-        this.add.tileSprite(0,0,width,height,'sky').setOrigin(0,0);
+        this.add.tileSprite(0,0,width,height,'sky')
+            .setOrigin(0,0)
+            .setScrollFactor(0)
 
         // Draw the tilemap
-        let level_data = this.cache.json.get('test-level');
-        const map = this.make.tilemap({data:level_data,tileWidth:50,
+        //let level_data = this.cache.json.get('test-level');
+        const map = this.make.tilemap({key:'test-level',tileWidth:50,
             tileHeight:50});
         const tiles = map.addTilesetImage('tileset');
         const layer = map.createStaticLayer(0, tiles, 0, 0);
@@ -44,9 +46,13 @@ export default class L1Scene extends Phaser.Scene{
             () => this.player.caught(this.puffball));
         this.physics.add.collider(this.puffball,layer,
             () => this.puffball.die());
-        //this.physics.add.overlap(this.puffball,layer,
-        //    () => this.puffball.die());
 
+        // Make camera follow player
+        const cam = this.cameras.main;
+        cam.startFollow(this.player);
+        cam.setBounds(0,0,map.widthInPixels,map.heightInPixels);
+
+        // Keyboard controls
         this.cursors = this.input.keyboard.createCursorKeys()
     }
 
@@ -60,6 +66,6 @@ export default class L1Scene extends Phaser.Scene{
             this.puffball.die();
         }
     }
-}
+}//Scene
 
 

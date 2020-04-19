@@ -18,4 +18,6 @@ A game for Ludum Dare 46.
 - Tunnel only you can fit in to push button - must throw puffball, go in and
     hit button, and come back out to catch puffball.
 - Throw animal to hit a button?
+- Some sort of trampoline?
+- Maybe you have to throw the ball but catch it before it hits a wall?
 - Maybe also a basketball hoop somewhere?

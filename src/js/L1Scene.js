@@ -2,6 +2,8 @@
 import Player from './Player.js';
 import Puffball from './Puffball.js';
 import Button from './Button.js';
+import Box from './Box.js';
+import Saw from './Saw.js';
 
 export default class L1Scene extends Phaser.Scene{
     constructor(){
@@ -12,6 +14,9 @@ export default class L1Scene extends Phaser.Scene{
         this.load.image('sky','src/assets/sky.png');
         this.load.image('puffball','src/assets/puffball.png');
         this.load.image('puffball-dead','src/assets/puffball_dead.png');
+        this.load.image('box','src/assets/box.png');
+        this.load.image('blade','src/assets/blade.png');
+        this.load.image('grate','src/assets/grate.png');
         this.load.image('blob1','src/assets/blobs/blob1.png');
         this.load.spritesheet('player',
             'src/assets/player.png',
@@ -20,6 +25,10 @@ export default class L1Scene extends Phaser.Scene{
         this.load.spritesheet('button',
             'src/assets/button.png',
             {frameWidth: 50, frameHeight: 50}
+        );
+        this.load.spritesheet('monster',
+            'src/assets/monster.png',
+            {frameWidth: 300, frameHeight: 500}
         );
 
         this.load.image('tileset','src/assets/level/tileset.png');
@@ -40,7 +49,7 @@ export default class L1Scene extends Phaser.Scene{
         const layer = map.createStaticLayer(0, tiles, 0, 0);
         layer.setCollisionBetween(0,14);
         this.layer = layer;
-        //Hack, to communicate with puffball:
+        //Hack, for the hacky puffball backup checks 
         this.safeTiles = [-1,15]
 
         // Add particle emitter for puffball death.
@@ -58,25 +67,109 @@ export default class L1Scene extends Phaser.Scene{
         particles.setDepth(10);
         deathEmitter.on = false;
 
-        // Add objects to the scene
-        //this.player = new Player(this,100,300);
-        this.player = new Player(this,4850,300);
+        // Add player to the scene
+        // Start of level:
+        this.player = new Player(this,100,300);
+        // Start of stone area:
+        //this.player = new Player(this,3350,300);
+        //Start of bridge area: (Probably not a necessary checkpoint)
+        //this.player = new Player(this,6200,300);
+        //Just inside castle
+        //this.player = new Player(this,8250,300);
+        // Past first 3 saws
+        //this.player = new Player(this,9600,300);
+        // Before final cutscene
+        //this.player = new Player(this,10350,1050);
+
         this.puffball = new Puffball(this,200,200,deathEmitter);
         this.player.caught(this.puffball)
-
-        this.buttons = [
-            new Button(this,5150,450,[]),
-        ];
-
-        // Set up interactions etc.
         this.physics.add.collider(this.player,layer);
         this.physics.add.overlap(this.player,this.puffball,
             () => this.player.caught(this.puffball));
         this.physics.add.collider(this.puffball,layer,
             () => this.puffball.die());
-        this.physics.add.overlap(this.player,this.buttons[0],
+
+        //Boxes ======================================================
+        this.boxes = this.physics.add.group({
+            immovable:true, allowGravity:false});
+        let boxSets = [
+            [new Box(this,5200,350),new Box(this,5200,300),
+             new Box(this,5200,250),new Box(this,5200,200)],
+            [
+             new Box(this,6250,450),new Box(this,6250,400),
+             new Box(this,6250,350),new Box(this,6700,350),
+             new Box(this,6700,450),new Box(this,6700,400),
+             new Box(this,6350,500,true),new Box(this,6650,500,true),
+             new Box(this,6300,500,true),new Box(this,6700,500,true),
+             new Box(this,6400,500,true),new Box(this,6550,500,true),
+             new Box(this,6400,500,true),new Box(this,6550,500,true),
+             new Box(this,6600,500,true)],
+            [new Box(this,6250,500),new Box(this,6700,500)],
+            [new Box(this,8150,450,false,'grate'),new Box(this,8150,400,false,'grate'),
+             new Box(this,8150,350,false,'grate'),new Box(this,8150,300,false,'grate'),
+             new Box(this,8150,250,false,'grate')],
+            [new Box(this,9600,500),new Box(this,9650,500),
+             new Box(this,9700,500),new Box(this,9750,500),
+             new Box(this,9800,500),new Box(this,9850,500)],
+            [new Box(this,9550,850,true,'grate'),new Box(this,9550,800,true,'grate'),
+             new Box(this,9550,750,true,'grate'),new Box(this,9550,700,true,'grate')],
+            [new Box(this,10500,1150,true),new Box(this,10500,1200,true),
+             new Box(this,10550,1150,true),new Box(this,10600,1150,true),
+             new Box(this,10650,1150,true),new Box(this,10700,1150,true),
+             new Box(this,10750,1150,true),new Box(this,10800,1150,true),
+             new Box(this,10800,1200,true)],
+        ];
+        for (var boxes of boxSets){
+            this.boxes.addMultiple(boxes);
+        }
+        this.physics.add.collider(this.player,this.boxes);
+        this.physics.add.collider(this.puffball,this.boxes,
+            () => this.puffball.die());
+
+        // Buttons ===================================================
+        this.buttons = this.physics.add.group({
+            immovable:true, allowGravity:false});
+        this.buttons.addMultiple([
+            new Button(this,5150,450,boxSets[0]),
+            new Button(this,6050,450,boxSets[1],180),
+            new Button(this,8050,50,boxSets[3],-90),
+            new Button(this,9850,200,boxSets[4]),
+            new Button(this,9250,850,boxSets[5],180),
+            new Button(this,10200,750,boxSets[6],-90),
+        ]);
+        this.physics.add.overlap(this.player,this.buttons,
+            (p,b) => b.click());
+        this.physics.add.collider(this.puffball,this.buttons,
             (p,b) => b.click());
 
+        // Saws ======================================================
+        // (Sorry, I gave up on getting physics groups to work properly)
+        this.saws = [ 
+            new Saw(this,8400,100,8400,300,250),
+            new Saw(this,8650,100,8650,300,400),
+            new Saw(this,8950,100,8950,250,200),
+            new Saw(this,9300,200,9300,100,100),
+            new Saw(this,9350,100,9350,200,100),
+            new Saw(this,9400,200,9400,100,100),
+            new Saw(this,9450,100,9450,200,100),
+            new Saw(this,10150,800,10400,800,300),
+        ];
+        for (var saw of this.saws){
+            this.physics.add.collider(this.player,saw);
+            this.physics.add.collider(this.puffball,saw,
+                () => this.puffball.die());
+        }
+
+        // The monster ==================================================
+        let monster = new Phaser.GameObjects.Sprite(this,11300,1200).setOrigin(0,0);
+        //this.physics.world.enable(monster);
+        this.add.existing(monster);
+        monster.anims.play('monst');
+        monster.depth = 10;
+
+
+
+        // Technical setup ============================================
         // Make camera follow player
         const cam = this.cameras.main;
         cam.startFollow(this.player);
@@ -96,6 +189,10 @@ export default class L1Scene extends Phaser.Scene{
         var tile = this.layer.getTileAtWorldXY(this.puffball.x,this.puffball.y);
         if (tile && !this.safeTiles.includes(tile.index)){
             this.puffball.die();
+        }
+
+        for (var saw of this.saws){
+            saw.update();
         }
     }
 
@@ -149,6 +246,15 @@ export default class L1Scene extends Phaser.Scene{
             frames: this.anims.generateFrameNumbers('button',{start:0,end:3}),
             framerate:10,
             repeat:0
+        });
+
+        // Monster
+        this.anims.create({
+            key:'monst', // Because that's what a monster does.
+            frames: this.anims.generateFrameNumbers('monster',{start:0,end:5}),
+            framerate:10,
+            repeat:-1,
+            yoyo:true
         });
     }
 }//Scene

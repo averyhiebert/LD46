@@ -23,25 +23,29 @@ export default class Player extends Phaser.GameObjects.Sprite{
         console.log(this.holding?"Still holding":"No longer holding");
     }
 
+    isTouchingDown(){
+        return this.body.blocked.down || this.body.touching.down;
+    }
+
     doControls(cursors){
         // Move left/right
         if (cursors.left.isDown){
             this.body.setVelocityX(-1*this.playerSpeed);
-            if (this.body.blocked.down){
+            if (this.isTouchingDown()){
                 this.anims.play(this.holding?'carry-walk':'walk',true);
             }else{
                 this.anims.play(this.holding?'carry-jump':'jump')
             }
         }else if (cursors.right.isDown){
             this.body.setVelocityX(this.playerSpeed);
-            if (this.body.blocked.down){
+            if (this.isTouchingDown()){
                 this.anims.play(this.holding?'carry-walk':'walk',true);
             }else{
                 this.anims.play(this.holding?'carry-jump':'jump')
             }
         }else{
             this.body.setVelocityX(0);
-            if (this.body.blocked.down){
+            if (this.isTouchingDown()){
                 this.anims.play(this.holding?'carry-idle':'idle')
             }else{
                 this.anims.play(this.holding?'carry-jump':'jump')
@@ -49,7 +53,7 @@ export default class Player extends Phaser.GameObjects.Sprite{
         }
 
         // Jump
-        if (cursors.up.isDown && this.body.blocked.down){
+        if (cursors.up.isDown && this.isTouchingDown()){
             this.body.setVelocityY(-500);
         }
 
@@ -57,6 +61,11 @@ export default class Player extends Phaser.GameObjects.Sprite{
         if (cursors.down.isDown && this.holding != null){
             this.holding.tossed();
             this.holding = null;
+        }
+
+        // For debugging/dev: Log location
+        if (cursors.shift.isDown){
+            console.log("Player location: " + this.x + ", " + this.y);
         }
     }
 

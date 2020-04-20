@@ -1,12 +1,13 @@
 export default class Button extends Phaser.GameObjects.Sprite{
-    constructor(scene,x,y,targets){
-        super(scene,x,y,'button');
-        scene.physics.world.enable(this)
+    constructor(scene,x,y,targets,rotation){
+        super(scene,x + 25,y + 25,'button');
         scene.add.existing(this);
+        scene.physics.add.existing(this);
+        rotation = rotation || 0;
 
-        this.setOrigin(0,0);
-        this.body.setImmovable(true);
-        this.body.setGravityY(-1000); //Sorry for bad hack
+        //this.setOrigin(0,0);
+        //this.setDisplayOrigin(0,0);
+        this.setAngle(rotation);
         this.setDepth(1);
 
         this.clicked = false;

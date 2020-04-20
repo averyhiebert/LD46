@@ -75,9 +75,9 @@ export default class Puffball extends Phaser.GameObjects.Sprite{
         }else{
             let velX = this.body.velocity.x;
             if (velX > 0){
-                this.body.setAngularVelocity(200);
-            }else if (velX < 0){
                 this.body.setAngularVelocity(-200);
+            }else if (velX < 0){
+                this.body.setAngularVelocity(200);
             }else{
                 this.body.setAngularVelocity(0);
             }

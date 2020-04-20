@@ -5,7 +5,7 @@ export default class Player extends Phaser.GameObjects.Sprite{
         scene.physics.world.enable(this)
         scene.add.existing(this);
         this.body.setBounce(0);
-        //this.body.setCollideWorldBounds(true);
+        this.setDepth(5);
 
         this.playerSpeed = 280;
         this.holding = null;
@@ -19,7 +19,6 @@ export default class Player extends Phaser.GameObjects.Sprite{
     }
 
     drop(){
-        console.log("DEBUG: Player dropped thing.");
         this.holding = null;
         console.log(this.holding?"Still holding":"No longer holding");
     }
@@ -58,7 +57,6 @@ export default class Player extends Phaser.GameObjects.Sprite{
         if (cursors.down.isDown && this.holding != null){
             this.holding.tossed();
             this.holding = null;
-            //this.setTexture('notcarrying')
         }
     }
 

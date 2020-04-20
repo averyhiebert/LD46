@@ -4,6 +4,8 @@ export default class Puffball extends Phaser.GameObjects.Sprite{
         scene.physics.world.enable(this)
         scene.add.existing(this);
         this.body.setBounce(0.5);
+        this.body.setCircle(20);
+        this.setDepth(6);
 
         // All the stuff for being thrown & caught
         this.isCaught = false;
@@ -76,6 +78,8 @@ export default class Puffball extends Phaser.GameObjects.Sprite{
                 this.body.setAngularVelocity(200);
             }else if (velX < 0){
                 this.body.setAngularVelocity(-200);
+            }else{
+                this.body.setAngularVelocity(0);
             }
         }
         if (this.dying){

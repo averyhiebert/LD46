@@ -44,9 +44,9 @@ export default class L1Scene extends Phaser.Scene{
         this.checkpoints = [
             [200,300], // Start
             [3350,300], // Start of stone area
-            //[6200,300], // Start of bridge
+            //[6200,300], // Start of bridge (testing checkpoint)
             [8250,300],  // Castle entrance
-            //[10350,1050],  // End of castle
+            //[10350,1050],  // End of castle (testing checkpoint)
         ];
 
         let { width, height } = this.sys.game.canvas;
@@ -177,9 +177,18 @@ export default class L1Scene extends Phaser.Scene{
 
         // Keyboard controls
         this.cursors = this.input.keyboard.createCursorKeys()
+
+        // Cutscene stuff
+        this.inCutscene = false;
+        this.cutsceneStartX = 10880;
     }
 
     update(){
+        if (this.inCutscene){
+            // Don't do anything if in cutscene.
+            this.puffball.update();
+            return;
+        }
         this.player.doControls(this.cursors);
         this.puffball.update();
 
@@ -196,16 +205,42 @@ export default class L1Scene extends Phaser.Scene{
             this.respawn();
         }
 
-
         for (var saw of this.saws){
             saw.update();
         }
         this.updateCheckpoint();
+        this.checkCutscene();
     }
 
     spawnPlayer(){
         let point = this.checkpoints[this.curr_checkpoint]
         return new Player(this,point[0],point[1]);
+    }
+
+    checkCutscene(){
+        if (!this.inCutscene && !this.puffball.dying &&
+                this.player.x > this.cutsceneStartX){
+                this.startCutscene();
+        }
+    }
+
+    startCutscene(){
+            this.inCutscene = true;
+            // Reset everything to a known position
+            this.player.x = this.cutsceneStartX
+            this.player.y = 1100;
+            this.player.caught(this.puffball);
+            this.player.anims.play('carry-walk');
+            this.player.body.setVelocityX(this.player.playerSpeed);
+            this.time.delayedCall(750,function(){
+                this.player.anims.play('idle');
+                this.player.holding.tossed();
+                this.player.body.setVelocityX(0);
+                this.cameras.main.startFollow(this.puffball);
+            },[],this);
+            this.time.delayedCall(2000,function(){
+                this.puffball.die();
+            },[],this);
     }
 
     updateCheckpoint(){
@@ -224,7 +259,9 @@ export default class L1Scene extends Phaser.Scene{
     }
 
     respawn(){
-        this.scene.restart({curr_checkpoint: this.curr_checkpoint});
+        if(!this.inCutscene){
+            this.scene.restart({curr_checkpoint: this.curr_checkpoint});
+        }
     }
 
     createAnimations(){

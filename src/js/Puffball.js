@@ -89,10 +89,12 @@ export default class Puffball extends Phaser.GameObjects.Sprite{
                 // We are done dying.
                 this.deathEmitter.on = false;
                 this.dead = true;
-                this.x = 0;
-                this.y = 0;
+                this.body.enable = false;
+                this.body.checkCollision.none = true;
                 this.setActive(false).setVisible(false);
                 //TODO: trigger the game over/respawn action in a moment.
+                this.scene.time.delayedCall(1500,this.scene.respawn,
+                    [],this.scene)
             }else{
                 let velX = this.body.velocity.x;
                 let velY = this.body.velocity.y;

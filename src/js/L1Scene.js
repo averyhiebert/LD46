@@ -10,6 +10,10 @@ export default class L1Scene extends Phaser.Scene{
         super('l1-scene')
     }
 
+    init(data){
+        this.curr_checkpoint = data.curr_checkpoint || 0;
+    }
+
     preload(){
         this.load.image('sky','src/assets/sky.png');
         this.load.image('puffball','src/assets/puffball.png');
@@ -37,6 +41,13 @@ export default class L1Scene extends Phaser.Scene{
 
     create(){
         this.createAnimations();
+        this.checkpoints = [
+            [200,300], // Start
+            [3350,300], // Start of stone area
+            //[6200,300], // Start of bridge
+            [8250,300],  // Castle entrance
+            //[10350,1050],  // End of castle
+        ];
 
         let { width, height } = this.sys.game.canvas;
         //Background & tilemap
@@ -67,20 +78,8 @@ export default class L1Scene extends Phaser.Scene{
         particles.setDepth(10);
         deathEmitter.on = false;
 
-        // Add player to the scene
-        // Start of level:
-        this.player = new Player(this,100,300);
-        // Start of stone area:
-        //this.player = new Player(this,3350,300);
-        //Start of bridge area: (Probably not a necessary checkpoint)
-        //this.player = new Player(this,6200,300);
-        //Just inside castle
-        //this.player = new Player(this,8250,300);
-        // Past first 3 saws
-        //this.player = new Player(this,9600,300);
-        // Before final cutscene
-        //this.player = new Player(this,10350,1050);
-
+        // Player & Puffball ========================================
+        this.player = this.spawnPlayer();
         this.puffball = new Puffball(this,200,200,deathEmitter);
         this.player.caught(this.puffball)
         this.physics.add.collider(this.player,layer);
@@ -191,9 +190,41 @@ export default class L1Scene extends Phaser.Scene{
             this.puffball.die();
         }
 
+        // Check for falling off screen
+        //  TODO: Better check (including exception for cutscene)
+        if (this.player.y > 1700 + 300 || this.puffball.y > 1700 + 300){
+            this.respawn();
+        }
+
+
         for (var saw of this.saws){
             saw.update();
         }
+        this.updateCheckpoint();
+    }
+
+    spawnPlayer(){
+        let point = this.checkpoints[this.curr_checkpoint]
+        return new Player(this,point[0],point[1]);
+    }
+
+    updateCheckpoint(){
+        if (!this.player.holding){
+            // Can only pass a checkpoint when carrying the puffball
+            return;
+        }
+        let max_checkpoint = this.checkpoints.length - 1;
+        if (this.curr_checkpoint < max_checkpoint){
+            let next = this.checkpoints[this.curr_checkpoint + 1];
+            if (this.player.x > next[0]){
+                this.curr_checkpoint += 1;
+                console.log("checkpoint passed");
+            }
+        }
+    }
+
+    respawn(){
+        this.scene.restart({curr_checkpoint: this.curr_checkpoint});
     }
 
     createAnimations(){

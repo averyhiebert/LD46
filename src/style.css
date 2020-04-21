@@ -2,13 +2,24 @@
     text-align:center;
 }
 
-.instructions{
+p{
     text-align:center;
     font-weight:bold;
     font-size:20px;
     color:#a800ff;
 }
 
-h1{
-    color:#a800ff;
+p a{
+    color:black;
 }
+
+h1{
+    color:white;
+    background-color:#a800ff;
+    border: thick solid black;
+    border-radius: 10px;
+    padding: 10px;
+    max-width:300px;
+    margin: 20px auto 20px auto;
+}
+

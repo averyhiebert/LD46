@@ -16,22 +16,25 @@ export default class L1Scene extends Phaser.Scene{
 
     preload(){
         this.load.image('sky','src/assets/sky.png');
-        this.load.image('puffball','src/assets/puffball.png');
-        this.load.image('puffball-dead','src/assets/puffball_dead.png');
-        this.load.image('box','src/assets/box.png');
-        this.load.image('blade','src/assets/blade.png');
-        this.load.image('grate','src/assets/grate.png');
-        this.load.image('blob1','src/assets/blobs/blob1.png');
+        this.load.image('controls','src/assets/interface/controls.png');
+        this.load.image('victory','src/assets/interface/victory_message.png');
+        this.load.image('puffball','src/assets/sprites/puffball.png');
+        this.load.image('puffball-dead','src/assets/sprites/puffball_dead.png');
+        this.load.image('box','src/assets/sprites/box.png');
+        this.load.image('maze-block','src/assets/sprites/maze_block.png');
+        this.load.image('blade','src/assets/sprites/blade.png');
+        this.load.image('grate','src/assets/sprites/grate.png');
+        this.load.image('blob1','src/assets/sprites/blob.png');
         this.load.spritesheet('player',
-            'src/assets/player.png',
+            'src/assets/sprites/player.png',
             {frameWidth: 50, frameHeight: 100}
         );
         this.load.spritesheet('button',
-            'src/assets/button.png',
+            'src/assets/sprites/button.png',
             {frameWidth: 50, frameHeight: 50}
         );
         this.load.spritesheet('monster',
-            'src/assets/monster.png',
+            'src/assets/sprites/monster.png',
             {frameWidth: 300, frameHeight: 500}
         );
 
@@ -62,6 +65,8 @@ export default class L1Scene extends Phaser.Scene{
         this.layer = layer;
         //Hack, for the hacky puffball backup checks 
         this.safeTiles = [-1,15]
+        // Other images
+        this.add.image(200,230,'controls');
 
         // Add particle emitter for puffball death.
         // TODO: Move this to Puffball class.
@@ -112,11 +117,11 @@ export default class L1Scene extends Phaser.Scene{
              new Box(this,9800,500),new Box(this,9850,500)],
             [new Box(this,9550,850,true,'grate'),new Box(this,9550,800,true,'grate'),
              new Box(this,9550,750,true,'grate'),new Box(this,9550,700,true,'grate')],
-            [new Box(this,10500,1150,true),new Box(this,10500,1200,true),
-             new Box(this,10550,1150,true),new Box(this,10600,1150,true),
-             new Box(this,10650,1150,true),new Box(this,10700,1150,true),
-             new Box(this,10750,1150,true),new Box(this,10800,1150,true),
-             new Box(this,10800,1200,true)],
+            [new Box(this,10500,1150,true,'maze-block'),new Box(this,10500,1200,true,'maze-block'),
+             new Box(this,10550,1150,true,'maze-block'),new Box(this,10600,1150,true,'maze-block'),
+             new Box(this,10650,1150,true,'maze-block'),new Box(this,10700,1150,true,'maze-block'),
+             new Box(this,10750,1150,true,'maze-block'),new Box(this,10800,1150,true,'maze-block'),
+             new Box(this,10800,1200,true,'maze-block')],
         ];
         for (var boxes of boxSets){
             this.boxes.addMultiple(boxes);
@@ -165,6 +170,10 @@ export default class L1Scene extends Phaser.Scene{
         this.add.existing(monster);
         monster.anims.play('monst');
         monster.depth = 10;
+
+        this.victoryMessage = this.add.image(11300,1050,'victory')
+            .setOrigin(0,0);
+        this.victoryMessage.visible = false;
 
 
 
@@ -240,7 +249,9 @@ export default class L1Scene extends Phaser.Scene{
             },[],this);
             this.time.delayedCall(2000,function(){
                 this.puffball.die();
+                this.victoryMessage.visible = true;
             },[],this);
+
     }
 
     updateCheckpoint(){

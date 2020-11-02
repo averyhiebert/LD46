@@ -5,4 +5,6 @@ you must toss around a fragile purple creature to get it to the end of the
 level safely.  Made using [Phaser](https://phaser.io/).  Mostly tested in
 Firefox.
 
+Play it [here!](https://averyhiebert.github.io/LD46/)
+
 Sorry for the terrible art and lack of sound.

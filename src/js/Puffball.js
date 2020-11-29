@@ -6,6 +6,8 @@ export default class Puffball extends Phaser.GameObjects.Sprite{
         this.body.setBounce(0.5);
         this.body.setCircle(20);
         this.setDepth(6);
+        this.anims.play('roll');
+        this.anims.pause()
 
         // All the stuff for being thrown & caught
         this.isCaught = false;
@@ -17,6 +19,7 @@ export default class Puffball extends Phaser.GameObjects.Sprite{
         this.dying = false;
         this.dead = false;
         this.tod = 0;
+        this.setScale(5);
     }
 
     tossed(){
@@ -25,6 +28,7 @@ export default class Puffball extends Phaser.GameObjects.Sprite{
         this.body.setVelocityX(0.9*this.heldBy.body.velocity.x)
         this.isCaught = false;
         this.heldBy = null;
+        this.anims.resume();
     }
 
     isCatchable(){
@@ -37,6 +41,7 @@ export default class Puffball extends Phaser.GameObjects.Sprite{
             this.isCaught = true;
             this.heldBy = catcher;
             this.body.enable=false; //Don't do physics when caught
+            this.anims.pause();
         }
     }
 
@@ -72,7 +77,10 @@ export default class Puffball extends Phaser.GameObjects.Sprite{
             let pos = this.heldBy.getHoldPosition();
             this.x = pos[0];
             this.y = pos[1];
+            //this.anims.pause()
         }else{
+            //this.anims.resume();
+            /*
             let velX = this.body.velocity.x;
             if (velX > 0){
                 this.body.setAngularVelocity(-200);
@@ -81,6 +89,7 @@ export default class Puffball extends Phaser.GameObjects.Sprite{
             }else{
                 this.body.setAngularVelocity(0);
             }
+            */
         }
         if (this.dying){
             let t = new Date().getTime();

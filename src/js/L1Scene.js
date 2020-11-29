@@ -25,9 +25,13 @@ export default class L1Scene extends Phaser.Scene{
         this.load.image('blade','src/assets/sprites/blade.png');
         this.load.image('grate','src/assets/sprites/grate.png');
         this.load.image('blob1','src/assets/sprites/blob.png');
+        this.load.spritesheet('pixel-puffball',
+            'src/assets/sprites/pixel_puffball.png',
+            {frameWidth:8,frameHeight:8}
+        );
         this.load.spritesheet('player',
-            'src/assets/sprites/player.png',
-            {frameWidth: 50, frameHeight: 100}
+            'src/assets/sprites/guy.png',
+            {frameWidth: 16, frameHeight: 16}
         );
         this.load.spritesheet('button',
             'src/assets/sprites/button.png',
@@ -276,47 +280,56 @@ export default class L1Scene extends Phaser.Scene{
     }
 
     createAnimations(){
+        // Puffball =====================================================
+        this.anims.create({
+            key: 'roll',
+            frames: this.anims.generateFrameNumbers('pixel-puffball',
+                {start:0,end:7}),
+            frameRate:10,
+            repeat:-1
+        });
+
         // Player =======================================================
         this.anims.create({
             key: 'carry-walk',
-            frames: this.anims.generateFrameNumbers('player',{start:3,end:8}),
-            framerate:5,
+            frames: this.anims.generateFrameNumbers('player',{start:16,end:19}),
+            frameRate:10,
             repeat:-1
         });
 
         this.anims.create({
             key: 'carry-idle',
-            frames: this.anims.generateFrameNumbers('player',{start:0,end:0}),
-            framerate:5,
-            repeat:-1
+            frames: this.anims.generateFrameNumbers('player',{start:10,end:10}),
+            frameRate:10,
+            repeat:0
         });
 
         this.anims.create({
             key: 'carry-jump',
-            frames: this.anims.generateFrameNumbers('player',{start:15,end:15}),
-            framerate:5,
-            repeat:-1
+            frames: this.anims.generateFrameNumbers('player',{start:13,end:14}),
+            frameRate:10,
+            repeat:0
         });
 
         this.anims.create({
             key: 'walk',
-            frames: this.anims.generateFrameNumbers('player',{start:9,end:14}),
-            framerate:5,
+            frames: this.anims.generateFrameNumbers('player',{start:6,end:9}),
+            frameRate:10,
             repeat:-1
         });
 
         this.anims.create({
             key: 'idle',
-            frames: this.anims.generateFrameNumbers('player',{start:1,end:1}),
-            framerate:5,
-            repeat:-1
+            frames: this.anims.generateFrameNumbers('player',{start:0,end:0}),
+            frameRate:10,
+            repeat:0
         });
 
         this.anims.create({
             key: 'jump',
-            frames: this.anims.generateFrameNumbers('player',{start:16,end:16}),
-            framerate:5,
-            repeat:-1
+            frames: this.anims.generateFrameNumbers('player',{start:3,end:4}),
+            frameRate:10,
+            repeat:0
         });
 
         // Button ========================================================

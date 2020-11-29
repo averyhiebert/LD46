@@ -31,7 +31,7 @@ export default class L1Scene extends Phaser.Scene{
         );
         this.load.spritesheet('player',
             'src/assets/sprites/guy.png',
-            {frameWidth: 16, frameHeight: 16}
+            {frameWidth: 7, frameHeight: 13}
         );
         this.load.spritesheet('button',
             'src/assets/sprites/button.png',

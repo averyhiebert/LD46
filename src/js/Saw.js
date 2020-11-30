@@ -1,7 +1,7 @@
 export default class Box extends Phaser.GameObjects.Sprite{
     constructor(scene,x1,y1,x2,y2,speed){
         //Note: Currently buggy & does not work in horizontal direction.
-        super(scene,x1 + 25,y1 + 25,'blade'); //TODO: Correct image.
+        super(scene,x1 + 4,y1 + 4,'buzzsaw');
         scene.add.existing(this);
         scene.physics.world.enable(this);
         //scene.physics.add.existing(this);
@@ -19,13 +19,13 @@ export default class Box extends Phaser.GameObjects.Sprite{
             y2 = y;
         }
 
-        this.x1 = x1 + 25;
-        this.y1 = y1 + 25;
-        this.x2 = x2 + 25;
-        this.y2 = y2 + 25;
+        this.x1 = x1 + 4;
+        this.y1 = y1 + 4;
+        this.x2 = x2 + 4;
+        this.y2 = y2 + 4;
         this.speed = speed;
         this.body.setCircle();
-        this.body.setAngularVelocity(500);
+        //this.body.setAngularVelocity(500);
         this.body.setGravityY(0);
         this.body.setImmovable(true);
         this.body.setAllowGravity(false);

@@ -15,14 +15,11 @@ export default class L1Scene extends Phaser.Scene{
     }
 
     preload(){
-        this.load.image('sky','src/assets/sky.png');
+        this.load.image('sky','src/assets/level/sky.png');
         this.load.image('controls','src/assets/interface/controls.png');
         this.load.image('victory','src/assets/interface/victory_message.png');
-        this.load.image('puffball','src/assets/sprites/puffball.png');
-        this.load.image('puffball-dead','src/assets/sprites/puffball_dead.png');
         this.load.image('box','src/assets/sprites/box.png');
         this.load.image('maze-block','src/assets/sprites/maze_block.png');
-        this.load.image('blade','src/assets/sprites/blade.png');
         this.load.image('grate','src/assets/sprites/grate.png');
         this.load.image('blob1','src/assets/sprites/blob.png');
         this.load.spritesheet('pixel-puffball',
@@ -35,8 +32,13 @@ export default class L1Scene extends Phaser.Scene{
         );
         this.load.spritesheet('button',
             'src/assets/sprites/button.png',
-            {frameWidth: 50, frameHeight: 50}
+            {frameWidth: 6, frameHeight: 8}
         );
+        this.load.spritesheet('buzzsaw',
+            'src/assets/sprites/button.png',
+            {frameWidth: 8, frameHeight: 8}
+        );
+
         this.load.spritesheet('monster',
             'src/assets/sprites/monster.png',
             {frameWidth: 300, frameHeight: 500}
@@ -49,10 +51,10 @@ export default class L1Scene extends Phaser.Scene{
     create(){
         this.createAnimations();
         this.checkpoints = [
-            [200,300], // Start
-            [3350,300], // Start of stone area
+            [32,40], // Start
+            [536,40], // Start of stone area
             //[6200,300], // Start of bridge (testing checkpoint)
-            [8250,300],  // Castle entrance
+            [1320,40],  // Castle entrance
             //[10350,1050],  // End of castle (testing checkpoint)
         ];
 
@@ -61,8 +63,8 @@ export default class L1Scene extends Phaser.Scene{
         this.add.tileSprite(0,0,width,height,'sky')
             .setOrigin(0,0)
             .setScrollFactor(0)
-        const map = this.make.tilemap({key:'test-level',tileWidth:50,
-            tileHeight:50});
+        const map = this.make.tilemap({key:'test-level',tileWidth:8,
+            tileHeight:8});
         const tiles = map.addTilesetImage('tileset');
         const layer = map.createStaticLayer(0, tiles, 0, 0);
         layer.setCollisionBetween(0,14);
@@ -70,16 +72,16 @@ export default class L1Scene extends Phaser.Scene{
         //Hack, for the hacky puffball backup checks 
         this.safeTiles = [-1,15]
         // Other images
-        this.add.image(200,230,'controls');
+        //this.add.image(200,230,'controls');
 
         // Add particle emitter for puffball death.
         // TODO: Move this to Puffball class.
         var particles = this.add.particles('blob1');
         let deathEmitter = particles.createEmitter({
             lifespan: 1000,
-            gravityY: 1000,
-            rotate:{min:0,max:360},
-            scale: 2,
+            gravityY: 1600,
+            rotate:0,
+            //scale:1,
             alpha: {start:1,end:0},
             frequency:10,
             quantity: 20
@@ -89,7 +91,7 @@ export default class L1Scene extends Phaser.Scene{
 
         // Player & Puffball ========================================
         this.player = this.spawnPlayer();
-        this.puffball = new Puffball(this,200,200,deathEmitter);
+        this.puffball = new Puffball(this,32,32,deathEmitter);
         this.player.caught(this.puffball)
         this.physics.add.collider(this.player,layer);
         this.physics.add.overlap(this.player,this.puffball,
@@ -185,7 +187,7 @@ export default class L1Scene extends Phaser.Scene{
         // Make camera follow player
         const cam = this.cameras.main;
         cam.startFollow(this.player);
-        cam.followOffset.set(0,50);
+        cam.followOffset.set(0,8);
         cam.setBounds(0,0,map.widthInPixels,map.heightInPixels);
 
         // Keyboard controls
@@ -214,7 +216,7 @@ export default class L1Scene extends Phaser.Scene{
 
         // Check for falling off screen
         //  TODO: Better check (including exception for cutscene)
-        if (this.player.y > 1700 + 300 || this.puffball.y > 1700 + 300){
+        if (this.player.y > 272 + 48 || this.puffball.y > 272 + 48){
             this.respawn();
         }
 

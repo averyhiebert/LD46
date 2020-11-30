@@ -1,6 +1,6 @@
 export default class Button extends Phaser.GameObjects.Sprite{
     constructor(scene,x,y,targets,rotation){
-        super(scene,x + 25,y + 25,'button');
+        super(scene,x + 4,y + 4,'button');
         scene.add.existing(this);
         scene.physics.add.existing(this);
         rotation = rotation || 0;

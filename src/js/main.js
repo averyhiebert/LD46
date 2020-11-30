@@ -8,17 +8,25 @@ var map_height = 550;
 
 // Set up Phaser
 var config = {
-    type: Phaser.AUTO,
+    //type: Phaser.AUTO,
+    type: Phaser.CANVAS,
     width: map_width,
     height: map_height,
     physics: {
         default: 'arcade',
         arcade: {
-            gravity: {y: 1000}
+            gravity: {y: 350}
         }
     },
     scene:[L1Scene],
-    parent:"gamediv"
+    parent:"gamediv",
+    pixelArt: true,
+    scale: {
+        mode: Phaser.Scale.FIT,
+        autocenter: Phaser.Scale.CENTER_BOTH,
+        width:128,
+        height:88
+    }
 }
 
 export default new Phaser.Game(config)
